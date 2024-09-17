@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     waitForWebToons();
   }*/
 class HomeScreen extends StatefulWidget {
-  HomeScreen({super.key});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -48,27 +48,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   late Offset offset;
 
   late double deviceWidth;
-
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     Image.network(
                       // opacity: AlwaysStoppedAnimation(1),
                       height: double.infinity,
-                      snapshot.data![currenIndex].thumb,
+                      snapshot.data![currenIndex].thumb ?? '',
                       fit: BoxFit.cover,
                       headers: const {
                         'User-Agent' : ApiService.userAgent
@@ -157,9 +136,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         return Transform.translate(
                           offset: offset,
                           child: WebtoonWidget(
-                            title: snapshot.data![index].title,
-                            thumb: snapshot.data![index].thumb,
-                            id: snapshot.data![index].id,
+                            title: snapshot.data![index].title ?? '',
+                            thumb: snapshot.data![index].thumb ?? '',
+                            id: snapshot.data![index].id ?? '',
                           ),
                         );
                       },

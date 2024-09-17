@@ -1,13 +1,15 @@
 // as < 왼쪽에 있는것에 이름을 붙일 수 있다
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:webtoon/model/webtoon_detail_model.dart';
+import 'package:webtoon/model/webtoon_episode_model.dart';
 import 'package:webtoon/model/webtoon_model.dart';
 
 class ApiService {
   static const String baseUrl = "https://webtoon-crawler.nomadcoders.workers.dev";
   static const String today = "/today";
+  static const String episodes = "/episodes";
   static const String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
 
   /*
@@ -46,6 +48,41 @@ class ApiService {
         * */
       for(var webtoon in webtoons) {
         webtoonInstances.add(WebtoonModel.fromJson(webtoon));
+      }
+
+      return webtoonInstances;
+    }
+
+    throw Exception('Failed to load data');
+
+  }
+
+  static Future<WebtoonDetailModel> getToonById(String id) async {
+    final url = Uri.parse('$baseUrl/$id');
+
+    final response = await http.get(url);
+
+    if(response.statusCode == 200) {
+      final webtoon = jsonDecode(response.body);
+
+      return WebtoonDetailModel.fromJson(webtoon);
+    }
+
+    throw Exception('Failed to load data');
+
+  }
+
+  static Future<List<WebtoonEpisodeModel>> getLatestEpisodesById(String id) async {
+    List<WebtoonEpisodeModel> webtoonInstances = [];
+    final url = Uri.parse('$baseUrl/$id$episodes');
+
+    final response = await http.get(url);
+
+    if(response.statusCode == 200) {
+      final List<dynamic> episodes = jsonDecode(response.body);
+
+      for (var episode in episodes) {
+        webtoonInstances.add(WebtoonEpisodeModel.fromJson(episode));
       }
 
       return webtoonInstances;

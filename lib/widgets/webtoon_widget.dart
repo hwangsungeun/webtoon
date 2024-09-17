@@ -17,6 +17,7 @@ class WebtoonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     /*
     * GestureDetector 는 대부분에 동작을 감지하도록 해줌
+    * 클릭 등
     * */
     return GestureDetector(
       onTap: () {
