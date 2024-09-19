@@ -20,14 +20,22 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  late Future<WebtoonDetailModel> webtoon;
-  late Future<List<WebtoonEpisodeModel>> episode;
+  late WebtoonDetailModel webtoon = WebtoonDetailModel();
+  late List<WebtoonEpisodeModel> episode = [];
+
+  void getLatestEpisodesById(String id) async {
+    print('object : $id');
+    webtoon = await ApiService.getToonById(widget.id);
+    episode = await ApiService.getLatestEpisodesById(id);
+
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
-    webtoon = ApiService.getToonById(widget.id);
-    episode = ApiService.getLatestEpisodesById(widget.id);
+    getLatestEpisodesById(widget.id);
+    // episode = ApiService.getLatestEpisodesById(widget.id);
   }
 
   @override
@@ -54,69 +62,73 @@ class _DetailScreenState extends State<DetailScreen> {
           fontSize: 25,
         ),
       ),
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 50,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Hero(
-                tag: widget.id,
-                child: Container(
-                  width: MediaQuery.of(context).size.width/2,
-                  decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          offset: const Offset(10, 10),
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 10,
-                        ),
-                      ]
-                  ),
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.all(
-                        Radius.circular(16)
-                    ),
-                    child: Image.network(
-                      // height: 500,
-                      // width: double.infinity,
-                      widget.thumb,
-                      fit: BoxFit.cover,
-                      headers: const {
-                        'User-Agent' : ApiService.userAgent
-                      },
-                    ),
-                  ),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 50,
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          FutureBuilder(
-              future: webtoon,
-              builder: (context, AsyncSnapshot<WebtoonDetailModel> snapshot) {
-                if (snapshot.hasData) {
-                  return Padding(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Hero(
+                      tag: widget.id,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width/2,
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                offset: const Offset(10, 10),
+                                color: Colors.black.withOpacity(0.3),
+                                blurRadius: 10,
+                              ),
+                            ]
+                        ),
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.all(
+                              Radius.circular(16)
+                          ),
+                          child: Image.network(
+                            // height: 500,
+                            // width: double.infinity,
+                            widget.thumb,
+                            fit: BoxFit.cover,
+                            headers: const {
+                              'User-Agent' : ApiService.userAgent
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Builder(builder: (context) {
+                  return webtoon.title != null ?
+                  Padding(
                     padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 50),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                            '${snapshot.data!.about}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
-                        ),
+                        Builder(builder: (context) {
+                          return Text(
+                            '${webtoon.about}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          );
+                        },),
+
                         const SizedBox(
                           height: 15,
                         ),
                         Text(
-                          '${snapshot.data!.genre} / ${snapshot.data!.age}',
+                          '${webtoon.genre} / ${webtoon.age}',
                           style: const TextStyle(
                             fontSize: 13,
                             color: Colors.white,
@@ -124,13 +136,60 @@ class _DetailScreenState extends State<DetailScreen> {
                         ),
                       ],
                     ),
-                  );
-                }
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
+                  )
+                      : const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                },),
+                const SizedBox(
+                  height: 30,
+                ),
+              ],
+            ),
           ),
+          SliverList.builder(
+            itemCount: episode.length,
+            itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  45,
+                  0,
+                  45,
+                  10
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.green.shade500,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          maxLines: 1,
+                          '${episode[index].title}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      const Icon(
+                        Icons.chevron_right_rounded,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },)
         ],
       ),
     );
