@@ -5,7 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(const MyApp());
-  checkPermission();
+  // checkPermission();
 }
 
 Future<void> checkPermission() async {
@@ -17,7 +17,6 @@ Future<void> checkPermission() async {
   Map<Permission, PermissionStatus> statuses = await [
   Permission.phone,
   ].request();
-  print(statuses[Permission.phone]);
 }
 
 class MyApp extends StatelessWidget {

@@ -6,7 +6,7 @@ class WebtoonWidget extends StatelessWidget {
 
   final String title, thumb, id;
 
-  const WebtoonWidget({
+  WebtoonWidget({
     super.key,
     required this.title,
     required this.thumb,
@@ -34,78 +34,93 @@ class WebtoonWidget extends StatelessWidget {
             ),
         );
       },
-      child: Container(
-        margin: const EdgeInsets.fromLTRB(8.0, 180, 8.0, 0.0),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(32),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 4.0,
+      child: Column(
+        children: [
+          const Flexible(
+            flex: 1,
+              child: SizedBox(
+                height: 200,
               ),
-            ]
-        ),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(32),
-              child: Hero(
-                tag: id,
-                child: Container(
-                  decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          offset: const Offset(10, 10),
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 10,
+          ),
+          Flexible(
+            flex: 5,
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0.0),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(32),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 4.0,
+                    ),
+                  ]
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Hero(
+                      tag: id,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                offset: const Offset(10, 10),
+                                color: Colors.black.withOpacity(0.3),
+                                blurRadius: 10,
+                              ),
+                            ]
                         ),
-                      ]
-                  ),
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.all(
-                        Radius.circular(16)
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.all(
+                              Radius.circular(16)
+                          ),
+                          child: Image.network(
+                            height: (MediaQuery.of(context).size.height / 2),
+                            width: double.infinity,
+                            thumb,
+                            fit: BoxFit.cover,
+                            headers: const {
+                              'User-Agent' : ApiService.userAgent
+                            },
+                          ),
+                        ),
+                      ),
                     ),
-                    child: Image.network(
-                      height: 500,
-                      width: double.infinity,
-                      thumb,
-                      fit: BoxFit.cover,
-                      headers: const {
-                        'User-Agent' : ApiService.userAgent
-                      },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Text(
+                      maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 22,
+                        ),
+                        title
                     ),
                   ),
-                ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        5, (index) => const Icon(
+                        Icons.star,
+                        size: 20,
+                        color: Colors.orange,
+                      ),)
+                  ),
+                ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25),
-              child: Text(
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 22,
-                  ),
-                  title
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  5, (index) => const Icon(
-                  Icons.star,
-                  size: 20,
-                  color: Colors.orange,
-                ),)
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

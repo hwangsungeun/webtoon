@@ -47,11 +47,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   late Offset offset;
 
-  late double deviceWidth;
-
   @override
   Widget build(BuildContext context) {
-    deviceWidth = MediaQuery.of(context).size.width;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarBrightness: Brightness.dark,
